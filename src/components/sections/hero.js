@@ -3,6 +3,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styled from 'styled-components';
 import { navDelay, loaderDelay } from '@utils';
 import { usePrefersReducedMotion } from '@hooks';
+import TravelMap from '@components/travel-map';
 
 const StyledHeroSection = styled.section`
   ${({ theme }) => theme.mixins.flexCenter};
@@ -11,6 +12,7 @@ const StyledHeroSection = styled.section`
   min-height: 100vh;
   height: 100vh;
   padding: 0;
+  overflow-x: visible; /* allow relative left offset without clipping */
 
   @media (max-height: 700px) and (min-width: 700px), (max-width: 360px) {
     height: auto;
@@ -48,24 +50,75 @@ const StyledHeroSection = styled.section`
 
 // New inner grid for two-column layout
 const StyledHeroInner = styled.div`
-  width: 100%;
+  width: min(1400px, calc(100vw - clamp(4rem, 10vw, 12rem)));
+  margin-left: auto;
+  margin-right: auto;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-  gap: 56px;
-  align-items: center;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'intro map'
+    'whoami projects';
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+  position: relative;
+  left: clamp(-10.5rem, -9vw, -7.5rem);
+
+  > * {
+    min-width: 0;
+  }
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+    width: calc(100vw - 2rem);
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    grid-template-columns: 1fr; /* stack on small screens */
+    grid-template-rows: auto;
+    grid-template-areas:
+      'intro'
+      'map'
+      'whoami'
+      'projects';
     gap: 44px;
+    padding: 0;
   }
 
   @media (max-width: 600px) {
     gap: 32px;
+    padding: 0;
   }
 `;
 
 // Left column wrapper
-const StyledIntro = styled.div``;
+const StyledIntro = styled.div`
+  grid-area: intro;
+`;
+
+const StyledMapCol = styled.div`
+  grid-area: map;
+  display: flex;
+  align-items: stretch; /* let map fill height of grid area */
+  justify-content: stretch; /* let map fill width of grid area */
+  overflow: visible;
+  min-height: 100%;
+`;
+
+const StyledWhoami = styled.div`
+  grid-area: whoami;
+  align-self: start;
+  > * {
+    width: 100%;
+  }
+`;
+
+const StyledProjects = styled.div`
+  grid-area: projects;
+  align-self: start;
+  > * {
+    width: 100%;
+  }
+`;
 
 // Terminal-style panel
 const StyledTerminal = styled.div`
@@ -170,8 +223,8 @@ const Hero = () => {
     </>
   );
   const five = (
-    <a className="email-link" href="#projects">
-      View My Work
+    <a className="email-link" href="#about">
+      About Me
     </a>
   );
 
@@ -222,15 +275,55 @@ const Hero = () => {
     <StyledHeroSection>
       {prefersReducedMotion ? (
         <StyledHeroInner>
+          {/* Top-left: Intro */}
           <StyledIntro>
             {items.map((item, i) => (
               <div key={i}>{item}</div>
             ))}
           </StyledIntro>
-          {terminal}
+
+          {/* Top-right: Map */}
+          <StyledMapCol>
+            <TravelMap />
+          </StyledMapCol>
+
+          {/* Bottom-left: Existing whoami terminal */}
+          <StyledWhoami>{terminal}</StyledWhoami>
+
+          {/* Bottom-right: Projects terminal */}
+          <StyledProjects>
+            <StyledTerminal role="region" aria-label="Projects terminal">
+              <div className="terminal-header">
+                <span className="terminal-dots" aria-hidden="true">
+                  <span className="dot" />
+                  <span className="dot" />
+                  <span className="dot" />
+                </span>
+                <span className="terminal-title">joseph@portfolio: ~/projects</span>
+              </div>
+              <div className="terminal-content">
+                <p className="prompt">
+                  <span className="dollar">$</span> <span className="cmd">ls projects/</span>
+                </p>
+                <p>
+                  <a href="#projects">digital-forensics/</a>
+                </p>
+                <p>
+                  <a href="#projects">flowmind/</a>
+                </p>
+                <p>
+                  <a href="#projects">trimet-pipeline/</a>
+                </p>
+                <p>
+                  <a href="#projects">wifi-analysis-tool/</a>
+                </p>
+              </div>
+            </StyledTerminal>
+          </StyledProjects>
         </StyledHeroInner>
       ) : (
         <StyledHeroInner>
+          {/* Top-left: Intro with animated items */}
           <StyledIntro>
             <TransitionGroup component={null}>
               {isMounted &&
@@ -242,10 +335,61 @@ const Hero = () => {
             </TransitionGroup>
           </StyledIntro>
 
+          {/* Top-right: Map with animation */}
           <TransitionGroup component={null}>
             {isMounted && (
               <CSSTransition classNames="fadeup" timeout={loaderDelay}>
-                <div style={{ transitionDelay: `${items.length + 1}00ms` }}>{terminal}</div>
+                <StyledMapCol style={{ transitionDelay: `${items.length + 2}00ms` }}>
+                  <TravelMap />
+                </StyledMapCol>
+              </CSSTransition>
+            )}
+          </TransitionGroup>
+
+          {/* Bottom-left: Existing whoami terminal with animation */}
+          <TransitionGroup component={null}>
+            {isMounted && (
+              <CSSTransition classNames="fadeup" timeout={loaderDelay}>
+                <StyledWhoami style={{ transitionDelay: `${items.length + 1}00ms` }}>
+                  {terminal}
+                </StyledWhoami>
+              </CSSTransition>
+            )}
+          </TransitionGroup>
+
+          {/* Bottom-right: Projects terminal with animation */}
+          <TransitionGroup component={null}>
+            {isMounted && (
+              <CSSTransition classNames="fadeup" timeout={loaderDelay}>
+                <StyledProjects style={{ transitionDelay: `${items.length + 3}00ms` }}>
+                  <StyledTerminal role="region" aria-label="Projects terminal">
+                    <div className="terminal-header">
+                      <span className="terminal-dots" aria-hidden="true">
+                        <span className="dot" />
+                        <span className="dot" />
+                        <span className="dot" />
+                      </span>
+                      <span className="terminal-title">joseph@portfolio: ~/projects</span>
+                    </div>
+                    <div className="terminal-content">
+                      <p className="prompt">
+                        <span className="dollar">$</span> <span className="cmd">ls projects/</span>
+                      </p>
+                      <p>
+                        <a href="#projects">digital-forensics/</a>
+                      </p>
+                      <p>
+                        <a href="#projects">flowmind/</a>
+                      </p>
+                      <p>
+                        <a href="#projects">trimet-pipeline/</a>
+                      </p>
+                      <p>
+                        <a href="#projects">wifi-analysis-tool/</a>
+                      </p>
+                    </div>
+                  </StyledTerminal>
+                </StyledProjects>
               </CSSTransition>
             )}
           </TransitionGroup>
