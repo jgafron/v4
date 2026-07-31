@@ -6,11 +6,12 @@ import sr from '@utils/sr';
 import { usePrefersReducedMotion } from '@hooks';
 
 const StyledAboutSection = styled.section`
-  max-width: 900px;
+  max-width: 1040px;
+  margin: 0 auto;
 
   .inner {
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
     grid-gap: 50px;
 
     @media (max-width: 768px) {
@@ -18,7 +19,9 @@ const StyledAboutSection = styled.section`
     }
   }
 `;
+
 const StyledText = styled.div`
+  /* Optional legacy list styles retained (no list rendered) */
   ul.skills-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(140px, 200px));
@@ -45,10 +48,68 @@ const StyledText = styled.div`
       }
     }
   }
+
+  /* Minimal terminal panel styles (match hero terminal where practical) */
+  .terminal {
+    background: var(--light-navy);
+    border: 1px solid var(--lightest-navy);
+    border-radius: 8px;
+    padding: 18px 22px;
+    box-shadow: 0 10px 30px -15px var(--navy-shadow);
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--slate);
+    font-family: var(--font-mono);
+    font-size: var(--fz-sm);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--lightest-navy);
+  }
+
+  .terminal-title {
+    color: var(--slate);
+  }
+
+  .terminal-content {
+    font-size: var(--fz-sm);
+  }
+
+  .prompt {
+    margin: 0 0 8px 0;
+    font-family: var(--font-mono);
+    color: var(--slate);
+  }
+  .prompt .dollar {
+    color: var(--green);
+    margin-right: 6px;
+  }
+  .prompt .cmd {
+    color: var(--white);
+  }
+
+  .body {
+    font-family: var(--font-sans);
+    color: var(--white);
+    font-size: clamp(17px, 1.1vw, 19px);
+    line-height: 1.5;
+  }
+
+  .body p {
+    margin: 0 0 1rem 0;
+  }
+  .body .accent {
+    color: var(--green);
+  }
 `;
 const StyledPic = styled.div`
   position: relative;
-  max-width: 300px;
+  max-width: 340px;
+  justify-self: end;
+  align-self: center;
 
   @media (max-width: 768px) {
     margin: 50px auto 0;
@@ -125,59 +186,68 @@ const About = () => {
     sr.reveal(revealContainer.current, srConfig());
   }, []);
 
-  const skills = ['JavaScript (ES6+)', 'TypeScript', 'React', 'Eleventy', 'Node.js', 'WordPress'];
-
   return (
     <StyledAboutSection id="about" ref={revealContainer}>
       <h2 className="numbered-heading">About Me</h2>
 
       <div className="inner">
         <StyledText>
-          <div>
-            <p>
-              Hello! My name is Brittany and I enjoy creating things that live on the internet. My
-              interest in web development started back in 2012 when I decided to try editing custom
-              Tumblr themes — turns out hacking together a custom reblog button taught me a lot
-              about HTML &amp; CSS!
-            </p>
+          <div className="terminal" role="region" aria-label="About terminal panel">
+            <div className="terminal-header">
+              <span className="terminal-title">joseph@portfolio: ~/about</span>
+            </div>
+            <div className="terminal-content">
+              <p className="prompt">
+                <span className="dollar">$</span> <span className="cmd">cat about.txt</span>
+              </p>
+              <div className="body">
+                <p>
+                  My path into tech started in a weird place:{' '}
+                  <strong className="accent">culinary school</strong>. I spent years in professional
+                  kitchens, but outside of work I couldn't stop taking things apart, Linux boxes,
+                  Raspberry Pis, whatever I could get my hands on. I was making summer trips to{' '}
+                  <strong className="accent">DEF CON</strong> before any of this was formal, just
+                  because I loved it.
+                </p>
 
-            <p>
-              Fast-forward to today, and I’ve had the privilege of working at{' '}
-              <a href="https://us.mullenlowe.com/">an advertising agency</a>,{' '}
-              <a href="https://starry.com/">a start-up</a>,{' '}
-              <a href="https://www.apple.com/">a huge corporation</a>, and{' '}
-              <a href="https://scout.camd.northeastern.edu/">a student-led design studio</a>. My
-              main focus these days is building accessible, inclusive products and digital
-              experiences at <a href="https://upstatement.com/">Upstatement</a> for a variety of
-              clients.
-            </p>
+                <p>
+                  Eventually that curiosity won out. I went back to school, earned my computer
+                  science degree, and graduated <strong className="accent">Cum Laude</strong> while
+                  working full time and doing remote work for a company in Boise. It was not an easy
+                  stretch, but it taught me how to move fast and keep going even when the schedule
+                  fought back.
+                </p>
 
-            <p>
-              I also recently{' '}
-              <a href="https://www.newline.co/courses/build-a-spotify-connected-app">
-                launched a course
-              </a>{' '}
-              that covers everything you need to build a web app with the Spotify API using Node
-              &amp; React.
-            </p>
+                <p>
+                  These days I've been genuinely hooked on security operations, networking, and
+                  digital forensics. I'm in the{' '}
+                  <strong className="accent">top 15% of TryHackMe users</strong>, and there's still
+                  nothing like the feeling of finally cracking a room I've been stuck on for hours.
+                </p>
 
-            <p>Here are a few technologies I’ve been working with recently:</p>
+                <p>
+                  Off the clock, I train <strong className="accent">Brazilian jiu-jitsu</strong>. I
+                  competed young, stepped away for years, and came back a while ago completely
+                  hooked all over again. Language Learning (<strong className="accent">Thai</strong>
+                  ) has been a slow, ongoing project for a few years now, travel happens when it can
+                  (<strong className="accent">look at the map above to see where I've been!</strong>
+                  ), and most days end with relaxing on the balcony with my dogs.
+                </p>
+              </div>
+            </div>
           </div>
-
-          <ul className="skills-list">
-            {skills && skills.map((skill, i) => <li key={i}>{skill}</li>)}
-          </ul>
         </StyledText>
 
         <StyledPic>
           <div className="wrapper">
             <StaticImage
               className="img"
-              src="../../images/me.jpg"
+              src="../../images/joseph.png"
               width={500}
               quality={95}
               formats={['AUTO', 'WEBP', 'AVIF']}
-              alt="Headshot"
+              alt="Joseph Gafron"
+              imgStyle={{ objectFit: 'cover', objectPosition: '50% 50%' }}
             />
           </div>
         </StyledPic>
