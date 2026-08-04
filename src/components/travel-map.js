@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useMemo, useState, useEffect } from 'react';
+import styled, { keyframes, css } from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
 import { usePrefersReducedMotion } from '@hooks';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
@@ -12,10 +12,9 @@ const dash = keyframes`
   to { stroke-dashoffset: 0; }
 `;
 
-const pulse = keyframes`
-  0% { transform: scale(1); opacity: 0.6; }
-  70% { transform: scale(1.8); opacity: 0; }
-  100% { transform: scale(1.8); opacity: 0; }
+const markerFade = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 const StyledMapWrapper = styled.div`
@@ -40,22 +39,39 @@ const StyledMapWrapper = styled.div`
   svg {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     background: transparent !important;
+    /* Make the map visually larger within its cell without affecting layout */
+    transform: scale(1.08);
+    transform-origin: top center;
+    transition: none; /* avoid any initial calibration */
+
     -webkit-mask-image: radial-gradient(
-      105% 78% at 50% 58%,
-      #000 63%,
-      rgba(0, 0, 0, 0.85) 78%,
-      rgba(0, 0, 0, 0.35) 90%,
+      118% 70% at 50% 60%,
+      #000 58%,
+      rgba(0, 0, 0, 0.9) 74%,
+      rgba(0, 0, 0, 0.45) 88%,
       transparent 100%
     );
     mask-image: radial-gradient(
-      105% 78% at 50% 58%,
-      #000 63%,
-      rgba(0, 0, 0, 0.85) 78%,
-      rgba(0, 0, 0, 0.35) 90%,
+      118% 70% at 50% 60%,
+      #000 58%,
+      rgba(0, 0, 0, 0.9) 74%,
+      rgba(0, 0, 0, 0.45) 88%,
       transparent 100%
     );
+
+    /* Entrance animation: opacity only to prevent layout/transform shifts */
+    ${props =>
+    props.$reducedMotion
+      ? css`
+            opacity: 1;
+            animation: none;
+          `
+      : css`
+            opacity: 0;
+            animation: ${markerFade} 500ms ease-out forwards;
+          `}
   }
 
   .route {
@@ -69,7 +85,7 @@ const StyledMapWrapper = styled.div`
     &[data-animate='true'] {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: ${dash} 1200ms var(--easing) forwards;
+      animation: ${dash} 900ms ease-in-out forwards;
     }
   }
 
@@ -83,6 +99,11 @@ const StyledMapWrapper = styled.div`
 
   .marker {
     cursor: default;
+    opacity: ${props => (props.$reducedMotion ? 1 : 0)};
+  }
+
+  .marker[data-animate='true'] {
+    animation: ${markerFade} 600ms ease-out forwards;
   }
 
   .node {
@@ -103,10 +124,6 @@ const StyledMapWrapper = styled.div`
     stroke-width: 1;
     opacity: 0.35;
     transform-origin: center;
-
-    &[data-animate='true'] {
-      animation: ${pulse} 2400ms ease-out infinite;
-    }
   }
 
   .label {
@@ -168,6 +185,24 @@ const TravelMap = () => {
 
   const [activeCity, setActiveCity] = useState(null);
 
+  const ROUTE_DRAW_MS = 900; // per-route draw duration
+  const ROUTE_STAGGER_MS = 700; // start next route shortly before previous finishes
+  const START_DELAY_MS = 1200; // delay before starting the sequence after mount
+
+  // Delay route/marker animations until initial page render settles
+  const [startRoutes, setStartRoutes] = useState(false);
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      // Reveal everything after hydration without animation
+      setStartRoutes(true);
+      return;
+    }
+    const timer = setTimeout(() => setStartRoutes(true), START_DELAY_MS);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [prefersReducedMotion]);
+
   // Match the ComposableMap projection for custom paths
   const projection = useMemo(
     () =>
@@ -201,7 +236,7 @@ const TravelMap = () => {
   }, [projection]);
 
   return (
-    <StyledMapWrapper>
+    <StyledMapWrapper $reducedMotion={prefersReducedMotion}>
       <ComposableMap
         projection="geoEqualEarth"
         projectionConfig={{ scale: 225 }}
@@ -252,9 +287,18 @@ const TravelMap = () => {
               stroke="var(--green)"
               strokeWidth={1.1}
               className="route route--default"
-              data-animate={!prefersReducedMotion}
+              data-animate={!prefersReducedMotion && startRoutes}
               pathLength={1}
               fill="none"
+              strokeDasharray={1}
+              strokeDashoffset={prefersReducedMotion ? (startRoutes ? 0 : 1) : 1}
+              style={
+                prefersReducedMotion
+                  ? { animation: 'none' }
+                  : startRoutes
+                    ? { animationDelay: `${i * ROUTE_STAGGER_MS}ms` }
+                    : undefined
+              }
             />
           ))}
 
@@ -270,19 +314,21 @@ const TravelMap = () => {
               stroke="var(--green)"
               strokeWidth={1.1}
               className="route route--active"
-              data-animate={!prefersReducedMotion}
+              data-animate={false}
               pathLength={1}
               fill="none"
             />
           )}
 
           <Marker coordinates={[home.lon, home.lat]}>
-            <g className="marker" tabIndex={0} aria-label={`${home.name} (home)`}>
+            <g
+              className="marker"
+              tabIndex={0}
+              aria-label={`${home.name} (home)`}
+              data-animate={false}
+              style={{ opacity: 1, animation: 'none' }}>
               <circle className="focus-ring" r={8} />
               <circle className="node node--home" r={4.5} />
-              {!prefersReducedMotion && (
-                <circle className="ring" r={6.5} data-animate={!prefersReducedMotion} />
-              )}
               <text className="label" x={10} y={-8}>
                 {home.name}
               </text>
@@ -295,15 +341,20 @@ const TravelMap = () => {
                 className="marker"
                 tabIndex={0}
                 aria-label={c.name}
+                data-animate={!prefersReducedMotion && startRoutes}
+                style={
+                  prefersReducedMotion
+                    ? { opacity: startRoutes ? 1 : 0, animation: 'none' }
+                    : startRoutes
+                      ? { animationDelay: `${i * ROUTE_STAGGER_MS + ROUTE_DRAW_MS}ms` }
+                      : { opacity: 0 }
+                }
                 onMouseEnter={() => setActiveCity(c)}
                 onMouseLeave={() => setActiveCity(null)}
                 onFocus={() => setActiveCity(c)}
                 onBlur={() => setActiveCity(null)}>
                 <circle className="focus-ring" r={7} />
                 <circle className="node node--city" r={3.5} />
-                {!prefersReducedMotion && (
-                  <circle className="ring" r={5.5} data-animate={!prefersReducedMotion} />
-                )}
                 <text className="label" x={10} y={-6}>
                   {c.name}
                 </text>

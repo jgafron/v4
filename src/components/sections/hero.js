@@ -101,7 +101,15 @@ const StyledMapCol = styled.div`
   align-items: stretch; /* let map fill height of grid area */
   justify-content: stretch; /* let map fill width of grid area */
   overflow: visible;
-  min-height: 100%;
+  /* Reserve space for the map on desktop to prevent layout shift */
+  aspect-ratio: 1.6 / 1;
+  min-height: 320px;
+
+  @media (max-width: 900px) {
+    /* On small screens, allow natural flow without forcing height */
+    aspect-ratio: auto;
+    min-height: 0;
+  }
 `;
 
 const StyledWhoami = styled.div`
@@ -335,16 +343,10 @@ const Hero = () => {
             </TransitionGroup>
           </StyledIntro>
 
-          {/* Top-right: Map with animation */}
-          <TransitionGroup component={null}>
-            {isMounted && (
-              <CSSTransition classNames="fadeup" timeout={loaderDelay}>
-                <StyledMapCol style={{ transitionDelay: `${items.length + 2}00ms` }}>
-                  <TravelMap />
-                </StyledMapCol>
-              </CSSTransition>
-            )}
-          </TransitionGroup>
+          {/* Top-right: Map; keep always mounted and reserve space to avoid layout shift */}
+          <StyledMapCol>
+            <TravelMap />
+          </StyledMapCol>
 
           {/* Bottom-left: Existing whoami terminal with animation */}
           <TransitionGroup component={null}>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Site Icon</title>
+  <rect width="512" height="512" fill="#020403"/>
+  <text x="256" y="286" text-anchor="middle" dominant-baseline="middle"
+        fill="#64f58d" font-size="280" font-family="SF Mono, Fira Code, Fira Mono, Roboto Mono, monospace">
+    JG
+  </text>
+</svg>

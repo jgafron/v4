@@ -122,6 +122,11 @@ const StyledProject = styled.li`
     font-size: var(--fz-xs);
     font-weight: 400;
   }
+  .project-overline::before {
+    content: '> ';
+    color: var(--green);
+    margin-right: 2px;
+  }
 
   .project-title {
     color: var(--lightest-slate);
