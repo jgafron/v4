@@ -41,7 +41,17 @@ const Loader = ({ finishLoading }) => {
 
   const animate = () => {
     const loader = anime.timeline({
-      complete: () => finishLoading(),
+      complete: () => {
+        try {
+          if (typeof window !== 'undefined') {
+            window.__APP_LOADER_DONE__ = true;
+            window.dispatchEvent(new Event('app:loader-finished'));
+          }
+        } catch (e) {
+          /* Intentionally ignore errors during loader completion to avoid breaking initial render */
+        }
+        finishLoading();
+      },
     });
 
     loader

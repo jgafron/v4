@@ -175,7 +175,7 @@ const StyledPic = styled.div`
 `;
 
 const About = () => {
-  const revealContainer = useRef(null);
+  const innerRef = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -183,14 +183,15 @@ const About = () => {
       return;
     }
 
-    sr.reveal(revealContainer.current, srConfig());
+    // Apply subtle reveal only to inner content; small distance and slightly earlier trigger
+    sr.reveal(innerRef.current, srConfig(80, 0.18, { distance: '4px', duration: 380 }));
   }, []);
 
   return (
-    <StyledAboutSection id="about" ref={revealContainer}>
+    <StyledAboutSection id="about">
       <h2 className="numbered-heading">About Me</h2>
 
-      <div className="inner">
+      <div className="inner" ref={innerRef}>
         <StyledText>
           <div className="terminal" role="region" aria-label="About terminal panel">
             <div className="terminal-header">

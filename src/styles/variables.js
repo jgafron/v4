@@ -17,9 +17,10 @@ const variables = css`
     --pink: #f58db4;
     --blue: #71b7ff;
 
-    --font-sans: 'Calibre', 'Inter', 'San Francisco', 'SF Pro Text', -apple-system, system-ui,
-      sans-serif;
-    --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    --font-sans: 'Calibre', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+      Arial, system-ui, sans-serif;
+    --font-mono: 'SF Mono', ui-monospace, Menlo, Consolas, 'Liberation Mono', 'Courier New',
+      monospace;
 
     --fz-xxs: 12px;
     --fz-xs: 13px;

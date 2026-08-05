@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { navDelay, loaderDelay } from '@utils';
 import { usePrefersReducedMotion } from '@hooks';
 import TravelMap from '@components/travel-map';
 
@@ -63,6 +61,12 @@ const StyledHeroInner = styled.div`
   align-items: start;
   position: relative;
   left: clamp(-10.5rem, -9vw, -7.5rem);
+
+  /* Keep hero mounted; reveal with opacity/visibility only */
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transform: ${props => (props.$visible || props.$reducedMotion ? 'none' : 'translateY(6px)')};
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
 
   > * {
     min-width: 0;
@@ -206,16 +210,42 @@ const StyledTerminal = styled.div`
 `;
 
 const Hero = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
+  // Wait for loader to fully exit, then reveal hero as one unit
   useEffect(() => {
     if (prefersReducedMotion) {
-      return;
+      // Still wait for loader to finish to keep SSR/CSR identical
+      const onDone = () => setHeroVisible(true);
+      if (typeof window !== 'undefined' && window.__APP_LOADER_DONE__) {
+        setHeroVisible(true);
+        return;
+      }
+      window.addEventListener('app:loader-finished', onDone, { once: true });
+      return () => window.removeEventListener('app:loader-finished', onDone);
     }
 
-    const timeout = setTimeout(() => setIsMounted(true), navDelay);
-    return () => clearTimeout(timeout);
+    const onDone = () => setHeroVisible(true);
+    if (typeof window !== 'undefined' && window.__APP_LOADER_DONE__) {
+      setHeroVisible(true);
+      return;
+    }
+    window.addEventListener('app:loader-finished', onDone, { once: true });
+    return () => window.removeEventListener('app:loader-finished', onDone);
+  }, [prefersReducedMotion]);
+
+  const handleHeroShown = useCallback(e => {
+    if (e.target !== e.currentTarget) {return;}
+    if (e.propertyName !== 'opacity') {return;}
+    try {
+      if (typeof window !== 'undefined') {
+        window.__APP_HERO_VISIBLE__ = true;
+        window.dispatchEvent(new Event('app:hero-visible'));
+      }
+    } catch (e) {
+      /* Intentionally ignore errors during hero visibility notification */
+    }
   }, []);
 
   // Left column content
@@ -281,122 +311,56 @@ const Hero = () => {
 
   return (
     <StyledHeroSection>
-      {prefersReducedMotion ? (
-        <StyledHeroInner>
-          {/* Top-left: Intro */}
-          <StyledIntro>
-            {items.map((item, i) => (
-              <div key={i}>{item}</div>
-            ))}
-          </StyledIntro>
+      <StyledHeroInner
+        $visible={heroVisible}
+        $reducedMotion={prefersReducedMotion}
+        onTransitionEnd={handleHeroShown}>
+        {/* Top-left: Intro */}
+        <StyledIntro>
+          {items.map((item, i) => (
+            <div key={i}>{item}</div>
+          ))}
+        </StyledIntro>
 
-          {/* Top-right: Map */}
-          <StyledMapCol>
-            <TravelMap />
-          </StyledMapCol>
+        {/* Top-right: Map; always mounted and reserving space */}
+        <StyledMapCol>
+          <TravelMap />
+        </StyledMapCol>
 
-          {/* Bottom-left: Existing whoami terminal */}
-          <StyledWhoami>{terminal}</StyledWhoami>
+        {/* Bottom-left: Existing whoami terminal */}
+        <StyledWhoami>{terminal}</StyledWhoami>
 
-          {/* Bottom-right: Projects terminal */}
-          <StyledProjects>
-            <StyledTerminal role="region" aria-label="Projects terminal">
-              <div className="terminal-header">
-                <span className="terminal-dots" aria-hidden="true">
-                  <span className="dot" />
-                  <span className="dot" />
-                  <span className="dot" />
-                </span>
-                <span className="terminal-title">joseph@portfolio: ~/projects</span>
-              </div>
-              <div className="terminal-content">
-                <p className="prompt">
-                  <span className="dollar">$</span> <span className="cmd">ls projects/</span>
-                </p>
-                <p>
-                  <a href="#projects">digital-forensics/</a>
-                </p>
-                <p>
-                  <a href="#projects">flowmind/</a>
-                </p>
-                <p>
-                  <a href="#projects">trimet-pipeline/</a>
-                </p>
-                <p>
-                  <a href="#projects">wifi-analysis-tool/</a>
-                </p>
-              </div>
-            </StyledTerminal>
-          </StyledProjects>
-        </StyledHeroInner>
-      ) : (
-        <StyledHeroInner>
-          {/* Top-left: Intro with animated items */}
-          <StyledIntro>
-            <TransitionGroup component={null}>
-              {isMounted &&
-                items.map((item, i) => (
-                  <CSSTransition key={i} classNames="fadeup" timeout={loaderDelay}>
-                    <div style={{ transitionDelay: `${i + 1}00ms` }}>{item}</div>
-                  </CSSTransition>
-                ))}
-            </TransitionGroup>
-          </StyledIntro>
-
-          {/* Top-right: Map; keep always mounted and reserve space to avoid layout shift */}
-          <StyledMapCol>
-            <TravelMap />
-          </StyledMapCol>
-
-          {/* Bottom-left: Existing whoami terminal with animation */}
-          <TransitionGroup component={null}>
-            {isMounted && (
-              <CSSTransition classNames="fadeup" timeout={loaderDelay}>
-                <StyledWhoami style={{ transitionDelay: `${items.length + 1}00ms` }}>
-                  {terminal}
-                </StyledWhoami>
-              </CSSTransition>
-            )}
-          </TransitionGroup>
-
-          {/* Bottom-right: Projects terminal with animation */}
-          <TransitionGroup component={null}>
-            {isMounted && (
-              <CSSTransition classNames="fadeup" timeout={loaderDelay}>
-                <StyledProjects style={{ transitionDelay: `${items.length + 3}00ms` }}>
-                  <StyledTerminal role="region" aria-label="Projects terminal">
-                    <div className="terminal-header">
-                      <span className="terminal-dots" aria-hidden="true">
-                        <span className="dot" />
-                        <span className="dot" />
-                        <span className="dot" />
-                      </span>
-                      <span className="terminal-title">joseph@portfolio: ~/projects</span>
-                    </div>
-                    <div className="terminal-content">
-                      <p className="prompt">
-                        <span className="dollar">$</span> <span className="cmd">ls projects/</span>
-                      </p>
-                      <p>
-                        <a href="#projects">digital-forensics/</a>
-                      </p>
-                      <p>
-                        <a href="#projects">flowmind/</a>
-                      </p>
-                      <p>
-                        <a href="#projects">trimet-pipeline/</a>
-                      </p>
-                      <p>
-                        <a href="#projects">wifi-analysis-tool/</a>
-                      </p>
-                    </div>
-                  </StyledTerminal>
-                </StyledProjects>
-              </CSSTransition>
-            )}
-          </TransitionGroup>
-        </StyledHeroInner>
-      )}
+        {/* Bottom-right: Projects terminal */}
+        <StyledProjects>
+          <StyledTerminal role="region" aria-label="Projects terminal">
+            <div className="terminal-header">
+              <span className="terminal-dots" aria-hidden="true">
+                <span className="dot" />
+                <span className="dot" />
+                <span className="dot" />
+              </span>
+              <span className="terminal-title">joseph@portfolio: ~/projects</span>
+            </div>
+            <div className="terminal-content">
+              <p className="prompt">
+                <span className="dollar">$</span> <span className="cmd">ls projects/</span>
+              </p>
+              <p>
+                <a href="#projects">digital-forensics/</a>
+              </p>
+              <p>
+                <a href="#projects">flowmind/</a>
+              </p>
+              <p>
+                <a href="#projects">trimet-pipeline/</a>
+              </p>
+              <p>
+                <a href="#projects">wifi-analysis-tool/</a>
+              </p>
+            </div>
+          </StyledTerminal>
+        </StyledProjects>
+      </StyledHeroInner>
     </StyledHeroSection>
   );
 };

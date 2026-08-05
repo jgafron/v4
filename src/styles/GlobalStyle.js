@@ -67,7 +67,7 @@ const GlobalStyle = createGlobalStyle`
     border-radius: 10px;
   }
 
-  body {
+    body {
     margin: 0;
     width: 100%;
     min-height: 100%;
@@ -77,6 +77,8 @@ const GlobalStyle = createGlobalStyle`
     background-color: var(--navy);
     color: var(--slate);
     font-family: var(--font-sans);
+    /* Help keep fallback text close to Calibre's x-height during swap */
+    font-size-adjust: 0.52;
     font-size: var(--fz-xl);
     line-height: 1.3;
 
@@ -103,6 +105,7 @@ const GlobalStyle = createGlobalStyle`
       }
     }
   }
+
 
   #root {
     min-height: 100vh;
@@ -355,10 +358,13 @@ const GlobalStyle = createGlobalStyle`
     margin: 1rem;
   }
 
-  code {
+    code {
     font-family: var(--font-mono);
+    /* Reduce reflow when SF Mono swaps in */
+    font-size-adjust: 0.47;
     font-size: var(--fz-md);
   }
+
 
   .skip-to-content {
     ${({ theme }) => theme.mixins.button};

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import styled from 'styled-components';
-import { loaderDelay } from '@utils';
 import { usePrefersReducedMotion } from '@hooks';
 
 const StyledSideElement = styled.div`
@@ -14,6 +12,11 @@ const StyledSideElement = styled.div`
   z-index: 10;
   color: var(--light-slate);
 
+  /* Keep mounted; reveal with opacity/visibility only */
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition: opacity 350ms ease-out;
+
   @media (max-width: 1080px) {
     left: ${props => (props.orientation === 'left' ? '20px' : 'auto')};
     right: ${props => (props.orientation === 'left' ? 'auto' : '20px')};
@@ -24,38 +27,34 @@ const StyledSideElement = styled.div`
   }
 `;
 
-const Side = ({ children, isHome, orientation }) => {
-  const [isMounted, setIsMounted] = useState(!isHome);
+const Side = ({ children, orientation }) => {
+  const [visible, setVisible] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!isHome || prefersReducedMotion) {
+    const show = () => setVisible(true);
+
+    // Reveal after loader exits to prevent flashing/staggered mounts
+    if (typeof window !== 'undefined' && window.__APP_LOADER_DONE__) {
+      show();
       return;
     }
-    const timeout = setTimeout(() => setIsMounted(true), loaderDelay);
-    return () => clearTimeout(timeout);
+
+    window.addEventListener('app:loader-finished', show, { once: true });
+    return () => window.removeEventListener('app:loader-finished', show);
   }, []);
 
   return (
-    <StyledSideElement orientation={orientation}>
-      {prefersReducedMotion ? (
-        <>{children}</>
-      ) : (
-        <TransitionGroup component={null}>
-          {isMounted && (
-            <CSSTransition classNames={isHome ? 'fade' : ''} timeout={isHome ? loaderDelay : 0}>
-              {children}
-            </CSSTransition>
-          )}
-        </TransitionGroup>
-      )}
+    <StyledSideElement
+      orientation={orientation}
+      $visible={prefersReducedMotion ? visible : visible}>
+      {children}
     </StyledSideElement>
   );
 };
 
 Side.propTypes = {
   children: PropTypes.node.isRequired,
-  isHome: PropTypes.bool,
   orientation: PropTypes.string,
 };
 

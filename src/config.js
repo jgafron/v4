@@ -49,10 +49,10 @@ module.exports = {
     darkNavy: '#020403',
   },
 
-  srConfig: (delay = 200, viewFactor = 0.25) => ({
+  srConfig: (delay = 200, viewFactor = 0.25, overrides = {}) => ({
     origin: 'bottom',
-    distance: '20px',
-    duration: 500,
+    distance: overrides.distance || '20px',
+    duration: overrides.duration || 500,
     delay,
     rotate: { x: 0, y: 0, z: 0 },
     opacity: 0,

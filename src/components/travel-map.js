@@ -187,9 +187,8 @@ const TravelMap = () => {
 
   const ROUTE_DRAW_MS = 900; // per-route draw duration
   const ROUTE_STAGGER_MS = 700; // start next route shortly before previous finishes
-  const START_DELAY_MS = 1200; // delay before starting the sequence after mount
 
-  // Delay route/marker animations until initial page render settles
+  // Wait for hero to be fully visible before starting routes/markers
   const [startRoutes, setStartRoutes] = useState(false);
   useEffect(() => {
     if (prefersReducedMotion) {
@@ -197,9 +196,18 @@ const TravelMap = () => {
       setStartRoutes(true);
       return;
     }
-    const timer = setTimeout(() => setStartRoutes(true), START_DELAY_MS);
+
+    const onHeroVisible = () => setStartRoutes(true);
+
+    // If hero already visible before this component mounted
+    if (typeof window !== 'undefined' && window.__APP_HERO_VISIBLE__) {
+      setStartRoutes(true);
+      return;
+    }
+
+    window.addEventListener('app:hero-visible', onHeroVisible, { once: true });
     return () => {
-      clearTimeout(timer);
+      window.removeEventListener('app:hero-visible', onHeroVisible);
     };
   }, [prefersReducedMotion]);
 

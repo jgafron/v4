@@ -1,15 +1,15 @@
 ---
 date: '1'
-title: 'Halcyon Theme'
-cover: './halcyon.png'
-github: 'https://github.com/bchiang7/halcyon-site'
-external: 'https://halcyon-theme.netlify.com/'
+title: 'Digital Forensics Investigation'
+cover: './Autopsy (2).png'
+github: 'https://github.com/jgafron/digital-forensics-investigation'
+
 tech:
-  - VS Code
-  - Sublime Text
-  - Atom
-  - iTerm2
-  - Hyper
+  - Autopsy
+  - Plaso
+  - Sleuth Kit
+  - libewf
+  - Linux
 ---
 
-A minimal, dark blue theme for VS Code, Sublime Text, Atom, iTerm, and more. Available on [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=brittanychiang.halcyon-vscode), [Package Control](https://packagecontrol.io/packages/Halcyon%20Theme), [Atom Package Manager](https://atom.io/themes/halcyon-syntax), and [npm](https://www.npmjs.com/package/hyper-halcyon-theme).
+Five academic digital forensics investigations completed as team lead, covering disk image analysis, deleted file recovery, geolocation with interactive mapping, browser and registry artifacts, network log correlation, and multi-device analysis in Autopsy.

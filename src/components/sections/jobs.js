@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
-import { CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
 import { srConfig } from '@config';
 import { KEY_CODES } from '@utils';
@@ -141,6 +140,21 @@ const StyledTabPanel = styled.div`
   height: auto;
   padding: 10px 5px;
 
+  /* Stack panels; fade via opacity only to prevent reflow */
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 250ms ease-out;
+
+  &[aria-hidden='false'] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
   ul {
     ${({ theme }) => theme.mixins.fancyList};
   }
@@ -192,6 +206,8 @@ const Jobs = () => {
   const [activeTabId, setActiveTabId] = useState(0);
   const [tabFocus, setTabFocus] = useState(null);
   const tabs = useRef([]);
+  const panelRefs = useRef([]);
+  const [panelsMinHeight, setPanelsMinHeight] = useState(0);
   const revealContainer = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -202,6 +218,15 @@ const Jobs = () => {
 
     sr.reveal(revealContainer.current, srConfig());
   }, []);
+
+  // Measure tallest panel and set a stable min-height for the container
+  useEffect(() => {
+    const heights = panelRefs.current.filter(Boolean).map(el => el.offsetHeight || 0);
+    const maxH = heights.length ? Math.max(...heights) : 0;
+    if (maxH && maxH !== panelsMinHeight) {
+      setPanelsMinHeight(maxH);
+    }
+  }, [jobsData]);
 
   const focusTab = () => {
     if (tabs.current[tabFocus]) {
@@ -269,36 +294,36 @@ const Jobs = () => {
           <StyledHighlight activeTabId={activeTabId} />
         </StyledTabList>
 
-        <StyledTabPanels>
+        <StyledTabPanels
+          style={{ minHeight: panelsMinHeight ? `${panelsMinHeight}px` : undefined }}>
           {jobsData &&
             jobsData.map(({ node }, i) => {
               const { frontmatter, html } = node;
               const { title, url, company, range } = frontmatter;
 
               return (
-                <CSSTransition key={i} in={activeTabId === i} timeout={250} classNames="fade">
-                  <StyledTabPanel
-                    id={`panel-${i}`}
-                    role="tabpanel"
-                    tabIndex={activeTabId === i ? '0' : '-1'}
-                    aria-labelledby={`tab-${i}`}
-                    aria-hidden={activeTabId !== i}
-                    hidden={activeTabId !== i}>
-                    <h3>
-                      <span>{title}</span>
-                      <span className="company">
-                        &nbsp;@&nbsp;
-                        <a href={url} className="inline-link">
-                          {company}
-                        </a>
-                      </span>
-                    </h3>
+                <StyledTabPanel
+                  key={i}
+                  id={`panel-${i}`}
+                  role="tabpanel"
+                  tabIndex={activeTabId === i ? '0' : '-1'}
+                  aria-labelledby={`tab-${i}`}
+                  aria-hidden={activeTabId !== i}
+                  ref={el => (panelRefs.current[i] = el)}>
+                  <h3>
+                    <span>{title}</span>
+                    <span className="company">
+                      &nbsp;@&nbsp;
+                      <a href={url} className="inline-link">
+                        {company}
+                      </a>
+                    </span>
+                  </h3>
 
-                    <p className="range">{range}</p>
+                  <p className="range">{range}</p>
 
-                    <div dangerouslySetInnerHTML={{ __html: html }} />
-                  </StyledTabPanel>
-                </CSSTransition>
+                  <div dangerouslySetInnerHTML={{ __html: html }} />
+                </StyledTabPanel>
               );
             })}
         </StyledTabPanels>
