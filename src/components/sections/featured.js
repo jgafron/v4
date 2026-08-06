@@ -64,7 +64,7 @@ const StyledProject = styled.li`
       }
 
       li {
-        margin: 0 0 5px 20px;
+        margin: 0 0 5px 16px;
 
         @media (max-width: 768px) {
           margin: 0 10px 5px 0;
@@ -160,16 +160,17 @@ const StyledProject = styled.li`
     ${({ theme }) => theme.mixins.boxShadow};
     position: relative;
     z-index: 2;
-    padding: 25px;
+    padding: 20px;
     border-radius: var(--border-radius);
     background-color: var(--light-navy);
     color: var(--light-slate);
-    font-size: var(--fz-lg);
+    font-size: calc(var(--fz-lg) - 3px);
 
     @media (max-width: 768px) {
       padding: 20px 0;
       background-color: transparent;
       box-shadow: none;
+      font-size: var(--fz-lg);
 
       &:hover {
         box-shadow: none;
@@ -196,7 +197,7 @@ const StyledProject = styled.li`
     list-style: none;
 
     li {
-      margin: 0 20px 5px 0;
+      margin: 0 16px 5px 0;
       color: var(--light-slate);
       font-family: var(--font-mono);
       font-size: var(--fz-xs);
@@ -370,7 +371,7 @@ const Featured = () => {
                     <p className="project-overline">Featured Project</p>
 
                     <h3 className="project-title">
-                      <a href={external}>{title}</a>
+                      <a href={external ? external : github ? github : '#'}>{title}</a>
                     </h3>
 
                     <div

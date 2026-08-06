@@ -1,15 +1,17 @@
 ---
 date: '2'
-title: 'Spotify Profile'
-cover: './demo.png'
-github: 'https://github.com/bchiang7/spotify-profile'
-external: 'https://spotify-profile.herokuapp.com/'
+title: 'FlowMind'
+cover: './flowmind.png'
+github: 'https://github.com/jgafron/flowmind-portfolio'
+external: ''
 tech:
-  - React
-  - Styled Components
-  - Express
-  - Spotify API
-  - Heroku
+  - React Native
+  - Expo
+  - Firebase
+  - Firestore
+  - Cloud Functions
+  - Gemini 2.5
+  - Google GenKit
 ---
 
-A web app for visualizing personalized Spotify data. View your top artists, top tracks, recently played tracks, and detailed audio information about each track. Create and save new playlists of recommended tracks based on your existing playlists and more.
+AI-powered mobile productivity app built with React Native and Firebase. As a developer on the team, I implemented core technical features including authentication, Firestore data architecture, Cloud Functions, AI-assisted task generation, and notification workflows. FlowMind was a finalist in the University of Washington's Hollomon Health Innovation Challenge, won the Audience Choice Award at TiE Oregon Westside Pitch, and has grown a waitlist of more than 1,200 users.
