@@ -2,6 +2,7 @@
 date: '3'
 title: 'AdaFruit Packet Capture Device'
 cover: './adafruitfeather.png'
+github: 'https://github.com/jgafron/adafruit-wireless-capture'
 
 tech:
   - CircuitPython

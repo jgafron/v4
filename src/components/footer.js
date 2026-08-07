@@ -112,35 +112,38 @@ const Footer = () => {
       </StyledSocialLinks>
 
       <StyledCredit tabindex="-1">
-        <a href="https://github.com/bchiang7/v4">
-          <div>Designed &amp; Built by Joseph Gafron</div>
-
-          <div className="github-stats">
-            {githubInfo.stars && githubInfo.forks ? (
-              <>
-                <span>
-                  <Icon name="Star" />
-                  <span>{githubInfo.stars.toLocaleString()}</span>
-                </span>
-                <span>
-                  <Icon name="Fork" />
-                  <span>{githubInfo.forks.toLocaleString()}</span>
-                </span>
-              </>
-            ) : (
-              <div className="github-stats__placeholder" aria-hidden="true">
-                <span>
-                  <Icon name="Star" />
-                  <span>000,000</span>
-                </span>
-                <span>
-                  <Icon name="Fork" />
-                  <span>000,000</span>
-                </span>
-              </div>
-            )}
-          </div>
-        </a>
+        <div>
+          <a href="https://github.com/bchiang7/v4" target="_blank" rel="noreferrer">
+            Template Created by Brittany Chiang
+          </a>
+          <span> Redesigned by Joseph Gafron</span>
+        </div>
+        <div>Thanks, Brittany!</div>
+        <div className="github-stats">
+          {githubInfo.stars && githubInfo.forks ? (
+            <>
+              <span>
+                <Icon name="Star" />
+                <span>{githubInfo.stars.toLocaleString()}</span>
+              </span>
+              <span>
+                <Icon name="Fork" />
+                <span>{githubInfo.forks.toLocaleString()}</span>
+              </span>
+            </>
+          ) : (
+            <div className="github-stats__placeholder" aria-hidden="true">
+              <span>
+                <Icon name="Star" />
+                <span>000,000</span>
+              </span>
+              <span>
+                <Icon name="Fork" />
+                <span>000,000</span>
+              </span>
+            </div>
+          )}
+        </div>
       </StyledCredit>
     </StyledFooter>
   );

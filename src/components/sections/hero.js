@@ -236,8 +236,12 @@ const Hero = () => {
   }, [prefersReducedMotion]);
 
   const handleHeroShown = useCallback(e => {
-    if (e.target !== e.currentTarget) {return;}
-    if (e.propertyName !== 'opacity') {return;}
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+    if (e.propertyName !== 'opacity') {
+      return;
+    }
     try {
       if (typeof window !== 'undefined') {
         window.__APP_HERO_VISIBLE__ = true;
@@ -302,7 +306,9 @@ const Hero = () => {
           </div>
           <div className="row">
             <dt>status</dt>
-            <dd>Open to opportunities</dd>
+            <dd>
+              <span style={{ color: 'var(--green)' }}>● Always Learning</span>
+            </dd>
           </div>
         </dl>
       </div>
@@ -350,9 +356,6 @@ const Hero = () => {
               </p>
               <p>
                 <a href="#projects">flowmind/</a>
-              </p>
-              <p>
-                <a href="#projects">trimet-pipeline/</a>
               </p>
               <p>
                 <a href="#projects">wifi-analysis-tool/</a>

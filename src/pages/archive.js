@@ -115,12 +115,17 @@ const StyledTableContainer = styled.div`
           display: flex;
           align-items: center;
 
-          a {
+          a,
+          .icon-static {
             ${({ theme }) => theme.mixins.flexCenter};
             flex-shrink: 0;
           }
 
-          a + a {
+          /* Maintain spacing between icons whether links or static spans */
+          a + a,
+          a + .icon-static,
+          .icon-static + a,
+          .icon-static + .icon-static {
             margin-left: 10px;
           }
         }
@@ -204,24 +209,36 @@ const ArchivePage = ({ location, data }) => {
                       <td className="links">
                         <div>
                           {external && (
-                            <a href={external} aria-label="External Link">
+                            <span
+                              className="icon-static"
+                              aria-label="External Link"
+                              aria-disabled="true">
                               <Icon name="External" />
-                            </a>
+                            </span>
                           )}
                           {github && (
-                            <a href={github} aria-label="GitHub Link">
+                            <span
+                              className="icon-static"
+                              aria-label="GitHub Link"
+                              aria-disabled="true">
                               <Icon name="GitHub" />
-                            </a>
+                            </span>
                           )}
                           {ios && (
-                            <a href={ios} aria-label="Apple App Store Link">
+                            <span
+                              className="icon-static"
+                              aria-label="Apple App Store Link"
+                              aria-disabled="true">
                               <Icon name="AppStore" />
-                            </a>
+                            </span>
                           )}
                           {android && (
-                            <a href={android} aria-label="Google Play Store Link">
+                            <span
+                              className="icon-static"
+                              aria-label="Google Play Store Link"
+                              aria-disabled="true">
                               <Icon name="PlayStore" />
-                            </a>
+                            </span>
                           )}
                         </div>
                       </td>

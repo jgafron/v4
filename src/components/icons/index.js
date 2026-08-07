@@ -9,6 +9,8 @@ export { default as IconGitHub } from './github';
 export { default as IconHex } from './hex';
 export { default as IconInstagram } from './instagram';
 export { default as IconLinkedin } from './linkedin';
+export { default as IconTryHackMe } from './tryhackme';
+export { default as IconAward } from './award';
 export { default as IconLoader } from './loader';
 export { default as IconLogo } from './logo';
 export { default as IconPlayStore } from './playstore';
