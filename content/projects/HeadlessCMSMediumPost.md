@@ -1,15 +1,14 @@
 ---
 date: '2019-11-12'
-title: 'Building a Headless Mobile App CMS From Scratch'
-github: ''
-external: 'https://medium.com/stories-from-upstatement/building-a-headless-mobile-app-cms-from-scratch-bab2d17744d9'
+title: 'TriMet Streaming Data Pipeline'
+github: 'https://github.com/jgafron/TrimetDataPipeline'
+external: 'https://github.com/jgafron/TrimetDataPipeline'
 tech:
-  - Node
-  - Express
-  - Firebase
-  - Vue
+  - Python
+  - Google Cloud Pub/Sub
+  - PostgreSQL
 company: 'Upstatement'
 showInProjects: true
 ---
 
-Find out how we built a custom headless CMS with Node, Express, and Firebase for a project at Upstatement
+Real-time transit analytics platform that streams, validates, and visualizes live TriMet bus telemetry using Google Cloud Pub/Sub and PostgreSQL.

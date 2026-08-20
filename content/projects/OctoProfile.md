@@ -1,13 +1,13 @@
 ---
 date: '2019-07-15'
-title: 'OctoProfile'
-github: 'https://github.com/bchiang7/octoprofile'
-external: 'https://octoprofile.now.sh'
+title: 'AI Language Mining Assistant'
+github: 'https://github.com/jgafron/Netflix2Anki'
+external: 'https://github.com/jgafron/Netflix2Anki'
 tech:
-  - Next.js
-  - Chart.js
-  - GitHub API
+  - Python
+  - OpenCV
+  - OpenAI API
 showInProjects: true
 ---
 
-A nicer look at your GitHub profile and repo stats. Includes data visualizations of your top languages, starred repositories, and sort through your top repos by number of stars, forks, and size.
+Originally built as "Netflix2Anki," this AI-powered desktop app transforms screenshots into Anki flashcards using OCR, OpenAI, and computer vision.
