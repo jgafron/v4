@@ -1,14 +1,14 @@
 ---
 date: '2020-03-27'
-title: 'Integrating Algolia Search with WordPress Multisite'
-github: ''
-external: 'https://medium.com/stories-from-upstatement/integrating-algolia-search-with-wordpress-multisite-e2dea3ed449c'
+title: 'GamerChat'
+github: 'https://github.com/jgafron/GamerChat'
+external: 'https://github.com/jgafron/GamerChat'
 tech:
-  - Algolia
-  - WordPress
-  - PHP
+  - React
+  - Node.js
+  - Socket.IO
 company: 'Upstatement'
 showInProjects: true
 ---
 
-Building a custom multisite compatible WordPress plugin to build global search with Algolia
+A full-stack real-time messaging platform featuring secure JWT authentication, persistent messaging, and live communication using Socket.IO.

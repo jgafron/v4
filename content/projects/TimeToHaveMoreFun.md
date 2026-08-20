@@ -1,14 +1,14 @@
 ---
 date: '2020-01-10'
-title: 'Time to Have More Fun'
-github: 'https://github.com/bchiang7/time-to-have-more-fun'
-external: 'https://time-to-have-more-fun.now.sh/'
+title: 'WanderWise'
+github: 'https://github.com/jgafron/WanderWise2'
+external: 'https://github.com/jgafron/WanderWise2'
 tech:
-  - Next.js
-  - Tailwind CSS
+  - Flask
   - Firebase
+  - Google Maps API
 company: ''
 showInProjects: true
 ---
 
-A single page web app for helping me choose where to travel, built with Next.js, Firebase, and Tailwind CSS
+AI-powered travel planning platform that generates personalized itineraries using Google Maps, Firebase, and cloud-hosted AI to help users plan trips in minutes.
