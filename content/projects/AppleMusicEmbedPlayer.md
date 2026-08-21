@@ -1,14 +1,13 @@
 ---
 date: '2017-12-01'
-title: 'Apple Music Embeddable Web Player Widget'
-github: ''
-external: 'https://tools.applemusic.com/en-us'
+title: 'Parallel Argon2 Password Cracker'
+github: 'https://github.com/jgafron/PsArgon'
+external: 'https://github.com/jgafron/PsArgon'
 tech:
-  - MusicKit.js
-  - JS
-  - SCSS
-company: 'Apple'
+  - C
+  - POSIX Threads
+  - Argon2
 showInProjects: true
 ---
 
-Embeddable web player widget for Apple Music that lets users log in and listen to full song playback in the browser leveraging [MusicKit.js](https://developer.apple.com/documentation/musickitjs). Read more about this project on [9to5Mac](https://9to5mac.com/2018/06/03/apple-music-embeddable-web-player-listen-browser/).
+Multithreaded password auditing utility written in C that parallelizes Argon2 hash verification using POSIX threads and mutex synchronization.
