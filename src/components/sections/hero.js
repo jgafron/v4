@@ -97,6 +97,8 @@ const StyledHeroInner = styled.div`
 // Left column wrapper
 const StyledIntro = styled.div`
   grid-area: intro;
+  position: relative;
+  z-index: 2; /* ensure text sits above decorative/map layer on mobile */
 `;
 
 const StyledMapCol = styled.div`
@@ -105,6 +107,8 @@ const StyledMapCol = styled.div`
   align-items: stretch; /* let map fill height of grid area */
   justify-content: stretch; /* let map fill width of grid area */
   overflow: visible;
+  position: relative;
+  z-index: 1; /* keep map below text layers */
   /* Reserve space for the map on desktop to prevent layout shift */
   aspect-ratio: 1.6 / 1;
   min-height: 320px;
@@ -114,11 +118,18 @@ const StyledMapCol = styled.div`
     aspect-ratio: auto;
     min-height: 0;
   }
+
+  /* Mirror Brittany's mobile layering pattern (e.g., featured images) */
+  @media (max-width: 768px) {
+    opacity: 0.25;
+  }
 `;
 
 const StyledWhoami = styled.div`
   grid-area: whoami;
   align-self: start;
+  position: relative;
+  z-index: 2;
   > * {
     width: 100%;
   }
@@ -127,6 +138,8 @@ const StyledWhoami = styled.div`
 const StyledProjects = styled.div`
   grid-area: projects;
   align-self: start;
+  position: relative;
+  z-index: 2;
   > * {
     width: 100%;
   }
@@ -256,11 +269,12 @@ const Hero = () => {
   const one = <h1>Hi, my name is</h1>;
   const two = <h2 className="big-heading">Joseph Gafron.</h2>;
   const three = <h3 className="big-heading">I investigate systems and build practical tools.</h3>;
+
   const four = (
     <>
       <p>
-        I’m a computer science graduate focused on security operations, networking, and digital
-        forensics. I enjoy turning complex technical problems into clear, repeatable solutions.
+        I'm a computer science graduate focused on cybersecurity, digital forensics, and AI-powered
+        software. I enjoy building practical tools that solve real-world problems.
       </p>
     </>
   );
@@ -357,8 +371,12 @@ const Hero = () => {
               <p>
                 <a href="#projects">flowmind/</a>
               </p>
+
               <p>
                 <a href="#projects">wifi-analysis-tool/</a>
+              </p>
+              <p>
+                <a href="#projects">other-projects/</a>
               </p>
             </div>
           </StyledTerminal>

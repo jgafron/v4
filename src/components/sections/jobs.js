@@ -23,7 +23,7 @@ const StyledJobsSection = styled.section`
   }
 `;
 
-const StyledTabList = styled.div`
+const StyledTabList = styled.ul`
   position: relative;
   z-index: 3;
   width: max-content;
@@ -277,18 +277,19 @@ const Jobs = () => {
             jobsData.map(({ node }, i) => {
               const { company } = node.frontmatter;
               return (
-                <StyledTabButton
-                  key={i}
-                  isActive={activeTabId === i}
-                  onClick={() => setActiveTabId(i)}
-                  ref={el => (tabs.current[i] = el)}
-                  id={`tab-${i}`}
-                  role="tab"
-                  tabIndex={activeTabId === i ? '0' : '-1'}
-                  aria-selected={activeTabId === i ? true : false}
-                  aria-controls={`panel-${i}`}>
-                  <span>{company}</span>
-                </StyledTabButton>
+                <li key={i}>
+                  <StyledTabButton
+                    isActive={activeTabId === i}
+                    onClick={() => setActiveTabId(i)}
+                    ref={el => (tabs.current[i] = el)}
+                    id={`tab-${i}`}
+                    role="tab"
+                    tabIndex={activeTabId === i ? '0' : '-1'}
+                    aria-selected={activeTabId === i ? true : false}
+                    aria-controls={`panel-${i}`}>
+                    <span>{company}</span>
+                  </StyledTabButton>
+                </li>
               );
             })}
           <StyledHighlight activeTabId={activeTabId} />
