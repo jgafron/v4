@@ -36,6 +36,13 @@ const StyledMapWrapper = styled.div`
     min-height: 180px;
   }
 
+  /* Mobile-only landmass brightness: lighten only base geographies */
+  @media (max-width: 768px) {
+    .rsm-geography {
+      fill: var(--lightest-navy) !important;
+    }
+  }
+
   svg {
     display: block;
     width: 100%;

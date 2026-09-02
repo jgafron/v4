@@ -12,7 +12,18 @@ const StyledHeroSection = styled.section`
   padding: 0;
   overflow-x: visible; /* allow relative left offset without clipping */
 
-  @media (max-height: 700px) and (min-width: 700px), (max-width: 360px) {
+  /* Allow natural height below large-desktop while preserving min-height */
+  @media (max-width: 1200px) {
+    height: auto;
+    overflow-x: hidden; /* prevent horizontal bleed on mobile/tablet */
+  }
+
+  /* Prevent fixed header from overlaying hero content on mobile/tablet */
+  @media (max-width: 900px) {
+    padding-top: var(--nav-height);
+  }
+
+  @media (max-height: 1000px) and (min-width: 700px), (max-width: 360px) {
     height: auto;
     padding-top: var(--nav-height);
   }
@@ -72,19 +83,29 @@ const StyledHeroInner = styled.div`
     min-width: 0;
   }
 
-  @media (max-width: 900px) {
-    width: calc(100vw - 2rem);
-    margin-left: auto;
-    margin-right: auto;
+  /* Below large-desktop, let global containers control alignment */
+  @media (max-width: 1200px) {
+    width: 100%;
     left: 0;
-    grid-template-columns: 1fr; /* stack on small screens */
+  }
+
+  /* Switch to single-column stack earlier on smaller desktops/tablets */
+  @media (max-width: 1080px) {
+    grid-template-columns: 1fr; /* stack */
     grid-template-rows: auto;
     grid-template-areas:
       'intro'
       'map'
       'whoami'
       'projects';
-    gap: 44px;
+  }
+
+  @media (max-width: 900px) {
+    width: 100%; /* inherit site container width/padding */
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    gap: 24px;
     padding: 0;
   }
 
@@ -99,6 +120,14 @@ const StyledIntro = styled.div`
   grid-area: intro;
   position: relative;
   z-index: 2; /* ensure text sits above decorative/map layer on mobile */
+
+  @media (max-width: 900px) {
+    max-width: 100%;
+    width: 100%;
+    > * {
+      max-width: 100%;
+    }
+  }
 `;
 
 const StyledMapCol = styled.div`
@@ -116,12 +145,13 @@ const StyledMapCol = styled.div`
   @media (max-width: 900px) {
     /* On small screens, allow natural flow without forcing height */
     aspect-ratio: auto;
+    /* Do not force extra min-height here; inner wrapper governs mobile sizing */
     min-height: 0;
   }
 
   /* Mirror Brittany's mobile layering pattern (e.g., featured images) */
   @media (max-width: 768px) {
-    opacity: 0.25;
+    opacity: 0.45;
   }
 `;
 
@@ -133,6 +163,13 @@ const StyledWhoami = styled.div`
   > * {
     width: 100%;
   }
+  @media (max-width: 900px) {
+    max-width: 100%;
+    width: 100%;
+    > * {
+      max-width: 100%;
+    }
+  }
 `;
 
 const StyledProjects = styled.div`
@@ -142,6 +179,13 @@ const StyledProjects = styled.div`
   z-index: 2;
   > * {
     width: 100%;
+  }
+  @media (max-width: 900px) {
+    max-width: 100%;
+    width: 100%;
+    > * {
+      max-width: 100%;
+    }
   }
 `;
 
@@ -229,7 +273,7 @@ const Hero = () => {
   // Wait for loader to fully exit, then reveal hero as one unit
   useEffect(() => {
     if (prefersReducedMotion) {
-      // Still wait for loader to finish to keep SSR/CSR identical
+      // Still wait for loader to fi[nish to keep SSR/CSR identical
       const onDone = () => setHeroVisible(true);
       if (typeof window !== 'undefined' && window.__APP_LOADER_DONE__) {
         setHeroVisible(true);
