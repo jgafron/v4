@@ -6,6 +6,6 @@ range: 'October 2020 – January 2023'
 url: '#'
 ---
 
-- Supported remote employees with VPN access, account issues, connectivity problems, and day-to-day technical troubleshooting.
-- Investigated suspected phishing emails and organized findings into clear alerts for the team through Excel and Slack.
+- Supported engineers with SolidWorks troubleshooting and CAD project fulfillment
+- Assisted with new employee onboarding via RDP, installing core-applications and configuring VPN access
 - Managed meeting schedules, responded to customer inquiries, coordinated client communication, and supported the day-to-day administrative needs of a remote office.
